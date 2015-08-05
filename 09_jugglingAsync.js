@@ -9,6 +9,8 @@ http.get(sites[1], function finishGet(response){
 	response.pipe(bl(function(err,data, function waitCount()){
 		// if err throw err;
 		var text = data.toString();
+
+		
 		console.log(text);
 	}))	
 })
