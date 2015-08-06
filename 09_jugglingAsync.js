@@ -1,18 +1,38 @@
 var bl = require('bl');
 var http = require('http');
-var fs = require('fs');
-var texts = [];
+ 
+var output = "";
+var count = 0;
+var outputs = [];
 
-var sites = [process.argv[2],process.argv[3],process.argv[4]]; 
-
-http.get(sites[1], function finishGet(response){
-	response.pipe(bl(function(err,data, function waitCount()){
-		// if err throw err;
-		var text = data.toString();
-
+function httpGet(index){
+	http.get(process.argv[2 + index], function(response){
+		response.setEncoding('utf8');
+		response.pipe(bl(function(err,data){
+			if (err) return (err);
+			output = data.toString();
+			outputs[index] = output;
+		}));
+		// response.on("data", function(data){
+		// 	output = data.toString();
+		// })
+		response.on("end", function(data){
+			count++;
+			if(count == 3){
+				logOutputs();
+			}
+		})
 		
-		console.log(text);
-	}))	
-})
+	})
+}
 
+function logOutputs(){
+	for(var i=0;i<3;i++){
+		console.log(outputs[i]);
+	}
+}
 
+for(var i=0;i<3;i++){
+	httpGet(i);
+	// console.log(i);
+}
